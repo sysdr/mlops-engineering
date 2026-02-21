@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLOps Day2 Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="dashboard-wrap">
+    <header class="page-header">
+      <h1>MLOps Day2 Dashboard</h1>
+      <span class="header-badge">Live</span>
+    </header>
+    <main class="dashboard-main">
+      <section class="card card-metrics">
+        <h2 class="card-title">Model metrics</h2>
+        <div class="metrics" id="metrics">
+          <div class="metric"><div class="value" id="iter">-</div><div class="label">Iteration</div></div>
+          <div class="metric"><div class="value" id="acc">-</div><div class="label">Accuracy</div></div>
+          <div class="metric"><div class="value" id="drift">-</div><div class="label">Drift active</div></div>
+          <div class="metric"><div class="value" id="preds">-</div><div class="label">Total predictions</div></div>
+        </div>
+        <div class="updated" id="updated"></div>
+      </section>
+      <section class="card card-actions">
+        <h2 class="card-title">Actions</h2>
+        <div class="actions-inner">
+          <div class="links">
+            <a href="http://localhost:{{ api_port }}/predict" target="_blank">API: /predict</a>
+          </div>
+          <button id="restartBtn" onclick="restart()">Restart application</button>
+        </div>
+        <div class="msg" id="restartMsg"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const apiPort = {{ api_port }};
+    function loadMetrics() {
+      fetch('/api/metrics').then(r => r.json()).then(m => {
+        document.getElementById('iter').textContent = m.iteration;
+        document.getElementById('acc').textContent = (m.accuracy * 100).toFixed(2) + '%';
+        document.getElementById('drift').textContent = m.drift_active ? 'Yes' : 'No';
+        document.getElementById('preds').textContent = m.total_predictions;
+        document.getElementById('updated').textContent = m.last_check ? 'Last check: ' + m.last_check : '';
+      }).catch(() => {});
+    }
+    loadMetrics();
+    setInterval(loadMetrics, 3000);
+
+    function restart() {
+      const btn = document.getElementById('restartBtn');
+      const msg = document.getElementById('restartMsg');
+      btn.disabled = true;
+      msg.textContent = 'Stopping and restarting...';
+      msg.className = 'msg';
+      fetch('/api/restart', { method: 'POST' }).then(r => r.json()).then(d => {
+        if (d.ok) {
+          msg.textContent = d.message || 'Restart triggered.';
+          msg.className = 'msg success';
+        } else {
+          msg.textContent = 'Error: ' + (d.error || 'unknown');
+          msg.className = 'msg error';
+        }
+      }).catch(e => {
+        msg.textContent = 'Request failed: ' + e.message;
+        msg.className = 'msg error';
+      }).finally(() => {
+        btn.disabled = false;
+      });
+    }
+  </script>
+</body>
+</html>

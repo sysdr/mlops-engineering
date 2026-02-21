@@ -1,0 +1,74 @@
+{
+    "Data & Experimentation Management": [
+        {
+            "id": "data_q1",
+            "question": "How do you manage your training data versions?",
+            "options": [
+                "A) Manually copy files/datasets, no versioning.",
+                "B) Use Git LFS or simple cloud storage versioning (e.g., S3 versions).",
+                "C) Dedicated data versioning tool (e.g., DVC, Delta Lake) or robust data lake practices.",
+                "D) Automated, lineage-tracked data pipelines with robust versioning and schema enforcement."
+            ],
+            "scores": [1, 2, 3, 4]
+        },
+        {
+            "id": "data_q2",
+            "question": "How are model training experiments tracked?",
+            "options": [
+                "A) No formal tracking, rely on memory/notebooks.",
+                "B) Manual spreadsheets or basic logging in scripts.",
+                "C) Experiment tracking tools (e.g., MLflow, Weights & Biases) for metrics and artifacts.",
+                "D) Centralized, automated experiment tracking integrated with CI/CD and hyperparameter optimization."
+            ],
+            "scores": [1, 2, 3, 4]
+        }
+    ],
+    "Model Deployment & Integration": [
+        {
+            "id": "deploy_q1",
+            "question": "What is your process for deploying a new model to production?",
+            "options": [
+                "A) Manual steps, often requiring significant engineer intervention.",
+                "B) Scripted deployments, but still requires manual triggers and checks.",
+                "C) Automated CI/CD pipelines for model deployment, with canary/blue-green options.",
+                "D) Fully automated, self-healing deployment pipelines with rollback capabilities and A/B testing frameworks."
+            ],
+            "scores": [1, 2, 3, 4]
+        },
+        {
+            "id": "deploy_q2",
+            "question": "How are deployed models integrated into existing applications?",
+            "options": [
+                "A) Ad-hoc API endpoints or direct model file loading.",
+                "B) Standardized REST APIs, but manual endpoint management.",
+                "C) Centralized model serving platform (e.g., Sagemaker Endpoints, KServe) with API versioning.",
+                "D) Dynamic service mesh integration, automated API lifecycle management, and SDKs for client applications."
+            ],
+            "scores": [1, 2, 3, 4]
+        }
+    ],
+    "Monitoring & Governance": [
+        {
+            "id": "monitor_q1",
+            "question": "How do you monitor model performance in production?",
+            "options": [
+                "A) No monitoring beyond basic application health checks.",
+                "B) Manual checks of aggregated metrics occasionally.",
+                "C) Automated dashboards for key model metrics (accuracy, latency, throughput).",
+                "D) Real-time monitoring for data drift, concept drift, fairness, and automated alerting/retraining triggers."
+            ],
+            "scores": [1, 2, 3, 4]
+        },
+        {
+            "id": "monitor_q2",
+            "question": "What mechanisms are in place for model governance and compliance?",
+            "options": [
+                "A) None, or ad-hoc reviews.",
+                "B) Basic documentation of model purpose and data sources.",
+                "C) Model registry with metadata, owners, and clear approval workflows.",
+                "D) Automated audit trails, explainability tools (XAI), and adherence to ethical AI principles."
+            ],
+            "scores": [1, 2, 3, 4]
+        }
+    ]
+}

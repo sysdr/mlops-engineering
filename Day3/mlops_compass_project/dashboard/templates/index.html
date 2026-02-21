@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLOps Day3 Compass Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="dashboard-wrap">
+    <header class="page-header">
+      <div class="header-inner">
+        <h1>MLOps Day3 Compass Dashboard</h1>
+        <span class="header-badge">Live</span>
+      </div>
+    </header>
+    <div class="layout-grid">
+      <aside class="sidebar">
+        <section class="card card-actions">
+          <h2 class="card-title">Actions</h2>
+          <div class="actions-inner">
+            <button id="restartBtn" onclick="restart()">Restart application</button>
+          </div>
+          <div class="msg" id="restartMsg"></div>
+        </section>
+      </aside>
+      <main class="dashboard-main">
+        <section class="card card-metrics">
+          <h2 class="card-title">Assessment metrics</h2>
+          <div class="metrics" id="metrics">
+            <div class="metric metric-1"><div class="value" id="iter">-</div><div class="label">Iteration (runs)</div></div>
+            <div class="metric metric-2"><div class="value" id="acc">-</div><div class="label">Accuracy</div></div>
+            <div class="metric metric-3"><div class="value" id="preds">-</div><div class="label">Total questions</div></div>
+            <div class="metric metric-4"><div class="value" id="level">-</div><div class="label">Maturity level</div></div>
+          </div>
+          <div class="updated" id="updated"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script>
+    function loadMetrics() {
+      fetch('/api/metrics').then(r => r.json()).then(m => {
+        document.getElementById('iter').textContent = m.iteration;
+        document.getElementById('acc').textContent = (m.accuracy != null ? (Number(m.accuracy) * 100).toFixed(2) + '%' : '-');
+        document.getElementById('preds').textContent = m.total_predictions;
+        document.getElementById('level').textContent = m.overall_level != null ? m.overall_level : '-';
+        document.getElementById('updated').textContent = m.last_check ? 'Last update: ' + m.last_check : '';
+      }).catch(() => {});
+    }
+    loadMetrics();
+    setInterval(loadMetrics, 1000);
+    function restart() {
+      var btn = document.getElementById('restartBtn');
+      var msg = document.getElementById('restartMsg');
+      btn.disabled = true;
+      msg.textContent = 'Restarting...';
+      msg.className = 'msg';
+      fetch('/api/restart', { method: 'POST' }).then(r => r.json()).then(d => {
+        if (d.ok) {
+          msg.textContent = d.message || 'Restarted.';
+          msg.className = 'msg success';
+        } else {
+          msg.textContent = 'Error: ' + (d.error || 'unknown');
+          msg.className = 'msg error';
+        }
+      }).catch(function(e) {
+        msg.textContent = 'Request failed: ' + e.message;
+        msg.className = 'msg error';
+      }).finally(function() {
+        btn.disabled = false;
+      });
+    }
+  </script>
+</body>
+</html>
